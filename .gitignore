@@ -1,0 +1,5 @@
+# private information
+DownloadNOAADataFunctions/private_info.py
+
+# temporary python files
+*.pyc
