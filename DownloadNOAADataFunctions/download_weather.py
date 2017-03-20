@@ -12,11 +12,13 @@ base_url = 'https://www.ncdc.noaa.gov/cdo-web/api/v2/'
 # Get the list of airport stations
 
 # Request the information on all airport stations for specific state
-def get_airport_stations(my_token, state_FIPS):
+def get_airport_stations(yr, my_token, state_FIPS):
 	"""
 	This function gets the list of airport with 2016 weather data
 	----------
 	Input: 
+		yr (int)
+			year that you want the data for
 		my_token (str)
 			token generated from "token request page"
 		state_FIPS (int)
@@ -26,7 +28,7 @@ def get_airport_stations(my_token, state_FIPS):
 		 dictionary with airport station name as a key and 
 		 	station id as a value
 	"""
-	station_url = '{}stations?locationid=FIPS:{}&datetypeid=GHCND&startdate=2016-01-01&enddate=2016-12-31&limit=1000'.format(base_url, state_FIPS)
+	station_url = '{}stations?locationid=FIPS:{}&datetypeid=GHCND&startdate={}-01-01&enddate={}-12-31&limit=1000'.format(base_url, state_FIPS, yr, yr)
 	response = requests.get(station_url, headers = {'token': my_token}).json()	
 
 	airport_ids = {}
@@ -53,11 +55,13 @@ def get_station_info(my_token, station_id):
 	station_url = '{}stations/{}'.format(base_url, station_id)
 	return requests.get(station_url, headers = {'token': my_token}).json()
 
-def get_data(my_token, dataset_id, data_type_id, station_id):
+def get_data(yr, my_token, dataset_id, data_type_id, station_id):
 	"""
 	This function gets all the data for specified data type and station
 	----------
 	Input: 
+		yr (int)
+			year you want the data for
 		my_token (str)
 			token generated from "token request page"
 		dataset_id: dataset ID 
@@ -70,8 +74,8 @@ def get_data(my_token, dataset_id, data_type_id, station_id):
 	Output: 
 		pandas DataFrame
 	"""
-	data_url = '{}data?datasetid={}&datatypeid={}&stationid={}&startdate=2016-01-01&enddate=2016-12-31&units=standard&limit=1000'\
-	.format(base_url, dataset_id, data_type_id, station_id)
+	data_url = '{}data?datasetid={}&datatypeid={}&stationid={}&startdate={}-01-01&enddate={}-12-31&units=standard&limit=1000'\
+	.format(base_url, dataset_id, data_type_id, station_id, yr, yr)
 	data_json = requests.get(data_url, headers = {'token': my_token}).json()
 	
 	# Convert JSON format to a single dictionary
